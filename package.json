@@ -1,0 +1,16 @@
+{
+  "name": "upandrunning",
+  "version": "1.0.0",
+  "description": "A sample project to get our hands dirty",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Avinash Prabhakar",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.6.5",
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.2.1"
+  }
+}

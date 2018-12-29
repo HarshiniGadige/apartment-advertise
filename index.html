@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Up and Running</title>
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body ng-app="ngCribs" ng-controller="cribsController">
+
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a href="#"><img src="data/logo/nesthome_logo.png" height="70px"/></a> 
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+
+            <div class="col-sm-12">
+                <form class="form-inline">
+                    <h3>Select your price range</h3>
+                    <div class="col-sm-3">
+                        <label class="form-label">
+                            Minimum
+                        </label>
+                        <select class="form-control" ng-model="priceInfo.min">
+                            <option ng-repeat="price in priceList">{{price}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label">
+                            Maximum
+                        </label>
+                        <select class="form-control" ng-model="priceInfo.max">
+                            <option ng-repeat="price in priceList">{{price}}</option>
+                        </select>
+                    </div>
+                </form>
+                <div class="col-sm-6">
+                    <button type="button" ng-click="submitted=false" class="btn btn-warning pull-right" data-toggle="modal" data-target="#postAdvertise">Advertise</button>
+
+                    <div id="postAdvertise" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Post Advertisement</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-sm-12">
+                                        <form class="form-horizontal">
+                                            <div class="{{ submitted==true && !newApartment.name ? 'form-group has-error' : 'form-group' }}">
+                                                <label for="apartment-name" class="control-label">Apartment Name</label>
+                                                <input ng-model="newApartment.name" type="text" class="form-control" id="apartment-name"/>
+                                                <span class="{{ submitted==true && !newApartment.name ? 'text-danger' : ''}}" ng-show="submitted==true && !newApartment.name">Apartment name field cannot be empty</span>
+                                            </div>
+                                            <div class="{{ submitted==true && !newApartment.address ? 'form-group has-error' : 'form-group' }}">
+                                                <label for="apartment-address" class="control-label">Address</label>
+                                                <input ng-model="newApartment.address" type="text" class="form-control" id="apartment-address"/>
+                                                <span class="{{ submitted==true && !newApartment.address ? 'text-danger' : ''}}" ng-show="submitted==true && !newApartment.address">Apartment address field cannot be empty</span>
+                                            </div>
+                                            <div class="{{ submitted==true && !newApartment.city ? 'form-group has-error' : 'form-group' }}">
+                                                <label for="apartment-city" class="control-label">City</label>
+                                                <input ng-model="newApartment.city" type="text" class="form-control" id="apartment-city"/>
+                                                <span class="{{ submitted==true && !newApartment.city ? 'text-danger' : ''}}" ng-show="submitted==true && !newApartment.city">City field cannot be empty</span>
+                                            </div>
+                                            <div class="{{ submitted==true && !newApartment.owner ? 'form-group has-error' : 'form-group' }}">
+                                                <label for="apartment-owner" class="control-label">Owner</label>
+                                                <input ng-model="newApartment.owner" type="text" class="form-control" id="apartment-owner"/>
+                                                <span class="{{ submitted==true && !newApartment.owner ? 'text-danger' : ''}}" ng-show="submitted==true && !newApartment.owner">Owner field cannot be empty</span>
+                                            </div>
+                                            <div class="{{ submitted==true && !newApartment.phone ? 'form-group has-error' : 'form-group' }}">
+                                                <label for="apartment-phone" class="control-label">Phone</label>
+                                                <input ng-model="newApartment.phone" type="text" class="form-control" id="apartment-phone"/>
+                                                <span class="{{ submitted==true && !newApartment.phone ? 'text-danger' : ''}}" ng-show="submitted==true && !newApartment.phone">Phone number field cannot be empty</span>
+                                            </div>
+                                            <div class="{{ submitted==true && !newApartment.price  ? 'form-group has-error' : 'form-group' }}">
+                                                <label for="apartment-price" class="control-label">Price</label>
+                                                <input ng-model="newApartment.price" type="text" class="form-control" id="apartment-price"/>
+                                                <span class="{{ submitted==true && !newApartment.price ? 'text-danger' : ''}}" ng-show="submitted==true && !newApartment.price">Price field cannot be empty</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="apartment-description" class="control-label">Description</label>
+                                                <textarea ng-model="newApartment.description" rows="5" class="form-control" id="apartment-description"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="apartment-description" class="control-label">Choose an image file to upload</label>
+                                                <input type="file" name="pic" accept="data/apart_img/*" />
+                                            </div>
+                                                
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-success" name="submit-ad" ng-click="submitAd(newApartment);submitted=true">Submit Ad</button>
+                                    
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-4 nh-grid" ng-repeat="apartment in apartments | cribsFilter:priceInfo">
+                    <div class="col-sm-12">
+                        <img ng-src="data/apart_img/{{apartment.image}}" height="160px" width="100%" alt="No image available"/>
+                        <div class="caption">
+                            <div ng-hide="viewDetails===true">
+                                <h3><span class="glyphicon glyphicon-home"></span> {{apartment.name}}</h3>
+                                <p>{{apartment.address}}, {{apartment.city}}</p>
+                                <h4><span class="glyphicon glyphicon-user"></span> {{apartment.owner}}</h4>
+                                <p>{{apartment.phone}}</p>
+                                <p>{{apartment.price | currency}}</p>
+                                <button ng-hide="viewDetails===true" class="btn btn-sm btn-success pull-right" ng-click="viewDetails=true">Details</button>
+                                <button class="btn btn-sm btn-secondary pull-left" ng-click="editAdvertise(apartment); submitted=false;" data-toggle="modal" data-target="#editAdvertise">Edit</button>
+                                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteAdvertise">Delete</button>
+                                <div class="modal fade" id="deleteAdvertise" role="dialog">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Delete Advertisement</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to remove this Ad?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="deleteAdvertise(apartment)">Delete</button>
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="editAdvertise" class="modal fade" role="dialog">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Edit Advertisement</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="col-sm-12">
+                                                    <form class="form-horizontal">
+                                                        <div class="{{ submitted==true && !editApartment.name ? 'form-group has-error' : 'form-group' }}">
+                                                            <label for="apartment-name" class="control-label">Apartment Name</label>
+                                                            <input ng-model="editApartment.name" type="text" class="form-control" id="apartment-name"/>
+                                                            <span class="{{ submitted==true && !newApartment.name ? 'text-danger' : ''}}" ng-show="submitted==true && !editApartment.name">Apartment name field cannot be empty</span>
+                                                        </div>
+                                                        <div class="{{ submitted==true && !editApartment.address ? 'form-group has-error' : 'form-group' }}">
+                                                            <label for="apartment-address" class="control-label">Address</label>
+                                                            <input ng-model="editApartment.address" type="text" class="form-control" id="apartment-address"/>
+                                                            <span class="{{ submitted==true && !newApartment.address ? 'text-danger' : ''}}" ng-show="submitted==true && !editApartment.address">Apartment address field cannot be empty</span>
+                                                        </div>
+                                                        <div class="{{ submitted==true && !editApartment.city ? 'form-group has-error' : 'form-group' }}">
+                                                            <label for="apartment-city" class="control-label">City</label>
+                                                            <input ng-model="editApartment.city" type="text" class="form-control" id="apartment-city"/>
+                                                            <span class="{{ submitted==true && !newApartment.city ? 'text-danger' : ''}}" ng-show="submitted==true && !editApartment.city">City field cannot be empty</span>
+                                                        </div>
+                                                        <div class="{{ submitted==true && !editApartment.owner ? 'form-group has-error' : 'form-group' }}">
+                                                            <label for="apartment-owner" class="control-label">Owner</label>
+                                                            <input ng-model="editApartment.owner" type="text" class="form-control" id="apartment-owner"/>
+                                                            <span class="{{ submitted==true && !newApartment.owner ? 'text-danger' : ''}}" ng-show="submitted==true && !editApartment.owner">Owner field cannot be empty</span>
+                                                        </div>
+                                                        <div class="{{ submitted==true && !editApartment.phone ? 'form-group has-error' : 'form-group' }}">
+                                                            <label for="apartment-phone" class="control-label">Phone</label>
+                                                            <input ng-model="editApartment.phone" type="text" class="form-control" id="apartment-phone"/>
+                                                            <span class="{{ submitted==true && !newApartment.phone ? 'text-danger' : ''}}" ng-show="submitted==true && !editApartment.phone">Phone number field cannot be empty</span>
+                                                        </div>
+                                                        <div class="{{ !editApartment.price  ? 'form-group has-error' : 'form-group' }}">
+                                                            <label for="apartment-price" class="control-label">Price</label>
+                                                            <input ng-model="editApartment.price" type="text" class="form-control" id="apartment-price"/>
+                                                            <span class="{{ !newApartment.price ? 'text-danger' : ''}}" ng-show="submitted==true && !editApartment.price">Price field cannot be empty</span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="apartment-description" class="control-label">Description</label>
+                                                            <textarea ng-model="editApartment.description" rows="5" class="form-control" id="apartment-description"></textarea>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="apartment-description" class="control-label">Choose an image file to upload</label>
+                                                            <input type="file" name="pic" accept="data/apart_img/*" />
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary" name="submit-ad" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-hide="viewDetails===false">
+                                <p class="well-sm">{{apartment.description}}</p>
+                                <button ng-hide="viewDetails===false" class="btn btn-sm btn-danger pull-right" ng-click="viewDetails=false">Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+        
+    </body>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="node_modules/angular/angular.min.js"></script>
+    <script src="./app.js"></script>
+    <script src="scripts/cribsController.js"></script>
+    <script src="scripts/cribsFactory.js"></script>
+    <script src="scripts/cribsFilter.js"></script>
+</html>
